@@ -1,22 +1,8 @@
 use proc_macro::Span;
-use std::option_env;
-
-use once_cell::race::OnceBox;
-use tiny_keccak::{Xof, Hasher, Shake};
-
-
-static SEED: OnceBox<Vec<u8>> = OnceBox::new();
+use tiny_keccak::{Hasher, Shake, Xof};
 
 fn get_seed() -> &'static [u8] {
-    &SEED.get_or_init(|| {
-        if let Some(value) = option_env!("CONST_RANDOM_SEED") {
- 	    Box::new(value.as_bytes().to_vec())
-    	} else {
-            let mut value = [0u8; 32];
-            getrandom::getrandom(&mut value).unwrap();
-            Box::new(value.to_vec())
-        }
-    })[..]
+    "0xDEADBEEF".as_bytes()
 }
 
 pub(crate) fn gen_random<T: Random>() -> T {
